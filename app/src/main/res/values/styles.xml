@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.Music.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabIndicatorFullWidth">false</item>
+        <item name="tabIndicatorColor">@color/tab_indicator</item>
+        <item name="tabTextColor">@color/tab_text_normal</item>
+        <item name="tabSelectedTextColor">@color/tab_text_selected</item>
+        <item name="tabMode">scrollable</item>
+    </style>
+</resources>

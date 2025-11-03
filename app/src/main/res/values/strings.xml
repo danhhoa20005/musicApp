@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MusicApp</string>
+
+    <string name="close">Đóng</string>
+    <string name="menu">Menu</string>
+    <string name="now_playing">ĐANG PHÁT</string>
+    <string name="download">Download</string>
+    <string name="cover_image">Ảnh bìa</string>
+
+    <string name="repeat">Lặp lại</string>
+    <string name="previous">Bài trước</string>
+    <string name="playpause">Phát/Tạm dừng</string>
+    <string name="next">Bài tiếp</string>
+    <string name="shuffle">Ngẫu nhiên</string>
+
+    <string name="song_title_placeholder">Tên bài hát</string>
+    <string name="artist_placeholder">Nghệ sĩ</string>
+</resources>
