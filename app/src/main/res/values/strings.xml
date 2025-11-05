@@ -16,4 +16,11 @@
 
     <string name="song_title_placeholder">Tên bài hát</string>
     <string name="artist_placeholder">Nghệ sĩ</string>
+
+    <string name="tab_all_songs">Tất cả</string>
+    <string name="tab_mp3_songs">MP3</string>
+    <string name="tab_recent_songs">Mới thêm</string>
+    <string name="empty_song_list">Không có bài hát nào</string>
+    <string name="permission_audio_needed">Ứng dụng cần quyền đọc file âm thanh để hiển thị danh sách.</string>
+    <string name="service_not_ready">Dịch vụ phát nhạc chưa sẵn sàng.</string>
 </resources>

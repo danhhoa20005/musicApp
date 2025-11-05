@@ -3,36 +3,52 @@ package com.example.musicapp.ui.library
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.musicapp.R
+import com.example.musicapp.data.SongFilter
 import com.example.musicapp.data.SongStore
-import com.example.musicapp.data.model.Song
 import com.example.musicapp.databinding.RecyclerSongsBinding
 import com.example.musicapp.ui.main.MainActivity
 
 /**
- * Fragment con hiển thị toàn bộ bài hát cục bộ.
- * Dùng RecyclerView + item_song.xml (bạn đã có).
+ * Fragment hiển thị danh sách bài hát với tuỳ chọn lọc.
  */
-class AllSongsFragment : Fragment() {
+class SongListFragment : Fragment() {
+
+    companion object {
+        private const val ARG_FILTER = "filter"
+
+        fun newInstance(filter: SongFilter): SongListFragment = SongListFragment().apply {
+            arguments = bundleOf(ARG_FILTER to filter.name)
+        }
+    }
 
     private var _binding: RecyclerSongsBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: SongAdapter
 
+    private val filter: SongFilter by lazy {
+        val name = arguments?.getString(ARG_FILTER) ?: SongFilter.ALL.name
+        runCatching { SongFilter.valueOf(name) }.getOrDefault(SongFilter.ALL)
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Tạo layout RecyclerView đơn giản bằng viewbinding tự chế (RecyclerSongsBinding)
-        // Bạn có thể thay bằng 1 file layout khác tuỳ ý.
         _binding = RecyclerSongsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -40,11 +56,11 @@ class AllSongsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = SongAdapter { song, position ->
+        adapter = SongAdapter { _, position ->
             val service = (requireActivity() as MainActivity).musicService
             val list = adapter.currentList
             if (service == null) {
-                Toast.makeText(requireContext(), "Service not ready", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.service_not_ready, Toast.LENGTH_SHORT).show()
                 return@SongAdapter
             }
             service.setPlaylist(list, startIndex = position, playNow = true)
@@ -53,19 +69,34 @@ class AllSongsFragment : Fragment() {
 
         binding.recycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@AllSongsFragment.adapter
-            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+            adapter = this@SongListFragment.adapter
+            addItemDecoration(
+                DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+            )
         }
 
-        // Xin quyền nếu cần (dự phòng)
         if (!hasReadPermission()) {
-            Toast.makeText(requireContext(), "App needs storage/audio permission", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                R.string.permission_audio_needed,
+                Toast.LENGTH_SHORT
+            ).show()
+            showEmptyState(R.string.permission_audio_needed)
             return
         }
 
-        // Nạp dữ liệu
-        val songs = SongStore.loadDeviceSongs(requireContext())
+        val songs = SongStore.loadDeviceSongs(requireContext(), filter)
         adapter.submitList(songs)
+        binding.textEmpty.isVisible = songs.isEmpty()
+        if (songs.isNotEmpty()) {
+            binding.textEmpty.setText(R.string.empty_song_list)
+        }
+    }
+
+    private fun showEmptyState(@StringRes messageRes: Int = R.string.empty_song_list) {
+        adapter.submitList(emptyList())
+        binding.textEmpty.setText(messageRes)
+        binding.textEmpty.isVisible = true
     }
 
     private fun hasReadPermission(): Boolean {
