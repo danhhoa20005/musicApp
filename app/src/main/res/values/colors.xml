@@ -5,7 +5,7 @@
     <color name="bg_start">#142238</color>
     <color name="bg_center">#0F1B2C</color>
     <color name="bg_end">#0B1626</color>
-
+    <color name="outline">#26FFFFFF</color>  <!-- viền mờ 15% -->
     <!-- 🔤 Văn bản -->
     <color name="text_primary">#FFFFFFFF</color>        <!-- trắng -->
     <color name="text_secondary">#B3FFFFFF</color>     <!-- trắng nhạt 70% -->

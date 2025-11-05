@@ -51,12 +51,10 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.coroutines.android)
 
-    
-    val media3 = "1.4.1"
-    implementation("androidx.media3:media3-exoplayer:$media3")
-    implementation("androidx.media3:media3-session:$media3")
-    implementation("androidx.media3:media3-ui:$media3")
 
+    implementation("androidx.media3:media3-exoplayer:1.4.1")
+    implementation("androidx.media3:media3-session:1.4.1")
+    implementation("androidx.media3:media3-ui:1.4.1")
 
     implementation(libs.androidx.media.compat)
 

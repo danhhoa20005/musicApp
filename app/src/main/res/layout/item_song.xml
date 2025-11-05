@@ -1,59 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
-    android:padding="10dp"
-    android:background="@drawable/bg_art_placeholder">
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/outline"
+    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="true"
+    app:cardBackgroundColor="@android:color/transparent">
 
-    <ImageView
-        android:id="@+id/imageArt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@android:drawable/ic_menu_report_image"
-        android:background="@drawable/bg_art_placeholder"
-        android:scaleType="centerCrop"
-        android:contentDescription="art"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:padding="10dp"
+        android:background="@drawable/bg_art_placeholder">
 
-    <TextView
-        android:id="@+id/textTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="The Flob (prod. CHIN) | OFFICIAL MUSI..."
-        android:textColor="@color/text_primary"
-        android:textSize="16sp"
-        android:maxLines="1"
-        android:ellipsize="end"
-        app:layout_constraintStart_toEndOf="@id/imageArt"
-        app:layout_constraintEnd_toStartOf="@id/textDuration"
-        app:layout_constraintTop_toTopOf="@id/imageArt"
-        android:layout_marginStart="12dp"/>
+        <ImageView
+            android:id="@+id/imageArt"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_menu_report_image"
+            android:background="@drawable/bg_art_placeholder"
+            android:scaleType="centerCrop"
+            android:contentDescription="art"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <TextView
-        android:id="@+id/textSubtitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="NHẤT BẢI THIÊN ĐỊA"
-        android:textColor="@color/text_secondary"
-        android:textSize="13sp"
-        android:maxLines="1"
-        android:ellipsize="end"
-        app:layout_constraintStart_toStartOf="@id/textTitle"
-        app:layout_constraintEnd_toStartOf="@id/textDuration"
-        app:layout_constraintTop_toBottomOf="@id/textTitle"
-        app:layout_constraintBottom_toBottomOf="@id/imageArt"/>
+        <TextView
+            android:id="@+id/textTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="The Flob (prod. CHIN) | OFFICIAL MUSI..."
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/imageArt"
+            app:layout_constraintEnd_toStartOf="@id/textDuration"
+            app:layout_constraintTop_toTopOf="@id/imageArt"
+            android:layout_marginStart="12dp"/>
 
-    <TextView
-        android:id="@+id/textDuration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="6:35"
-        android:textColor="@color/text_secondary"
-        android:textSize="13sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textTitle"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textSubtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="NHẤT BẢI THIÊN ĐỊA"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintStart_toStartOf="@id/textTitle"
+            app:layout_constraintEnd_toStartOf="@id/textDuration"
+            app:layout_constraintTop_toBottomOf="@id/textTitle"
+            app:layout_constraintBottom_toBottomOf="@id/imageArt"/>
+
+        <TextView
+            android:id="@+id/textDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="6:35"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textTitle"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -47,18 +47,11 @@
                 android:contentDescription="@string/menu" />
         </LinearLayout>
 
-        <!-- Tên thư mục -->
-        <TextView
-            android:id="@+id/textFolder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/download"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:layout_marginBottom="12dp" />
+
 
         <!-- Ảnh bìa lớn -->
+
+        <!-- Tiêu đề bài hát -->
         <ImageView
             android:id="@+id/imageCover"
             android:layout_width="match_parent"
@@ -66,13 +59,12 @@
             android:layout_marginHorizontal="12dp"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
             android:background="@drawable/bg_art_placeholder"
-            android:src="@android:drawable/ic_media_play"
-            app:tint="@color/text_tertiary"
-            android:contentDescription="@string/cover_image" />
+            android:contentDescription="@string/cover_image"
+            android:scaleType="centerCrop"
 
-        <!-- Tiêu đề bài hát -->
+            app:tint="@color/text_tertiary" />
+
         <TextView
             android:id="@+id/textTitle"
             android:layout_width="match_parent"

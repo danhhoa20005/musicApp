@@ -70,9 +70,7 @@ class SongListFragment : Fragment() {
         binding.recycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@SongListFragment.adapter
-            addItemDecoration(
-                DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-            )
+
         }
 
         if (!hasReadPermission()) {
