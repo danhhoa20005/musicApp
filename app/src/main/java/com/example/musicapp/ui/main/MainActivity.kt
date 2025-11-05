@@ -1,11 +1,19 @@
 package com.example.musicapp.ui.main
 
-import android.content.*
-import android.os.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.Build
+import android.os.Bundle
+import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.musicapp.R
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.example.musicapp.databinding.ActivityMainBinding
 import com.example.musicapp.player.MusicService
 
@@ -23,6 +31,7 @@ class MainActivity : AppCompatActivity() {
             musicService = binder.getService()
             bound = true
         }
+
         override fun onServiceDisconnected(name: ComponentName?) {
             musicService = null
             bound = false
@@ -37,6 +46,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        applyEdgeToEdgeInsets()
+
         setSupportActionBar(binding.toolbar)
 
         requestRuntimePermissions()
@@ -49,6 +61,20 @@ class MainActivity : AppCompatActivity() {
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
+    private fun applyEdgeToEdgeInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.appBar) { view, insets ->
+            val statusBars = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            view.updatePadding(top = statusBars.top)
+            insets
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.navHost) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
+    }
+
     private fun requestRuntimePermissions() {
         val needs = mutableListOf<String>()
         if (Build.VERSION.SDK_INT >= 33) {
@@ -57,7 +83,9 @@ class MainActivity : AppCompatActivity() {
         } else {
             needs += android.Manifest.permission.READ_EXTERNAL_STORAGE
         }
-        permissionLauncher.launch(needs.toTypedArray())
+        if (needs.isNotEmpty()) {
+            permissionLauncher.launch(needs.toTypedArray())
+        }
     }
 
     override fun onDestroy() {
