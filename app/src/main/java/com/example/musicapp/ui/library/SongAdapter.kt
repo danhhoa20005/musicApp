@@ -2,6 +2,7 @@ package com.example.musicapp.ui.library
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +10,8 @@ import com.example.musicapp.R
 import com.example.musicapp.data.model.Song
 import com.example.musicapp.databinding.ItemSongBinding
 import java.util.concurrent.TimeUnit
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 
 class SongAdapter(
     private val onClick: (Song, Int) -> Unit
@@ -22,10 +25,29 @@ class SongAdapter(
     inner class SongViewHolder(private val binding: ItemSongBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Song) {
-            val fallback = binding.root.context.getString(R.string.artist_placeholder)
+            val context = binding.root.context
+            val fallback = context.getString(R.string.artist_placeholder)
+
+            // Chữ và thời lượng
             binding.textTitle.text = item.title
             binding.textSubtitle.text = buildSubtitle(item, fallback)
-            binding.root.setOnClickListener { onClick(item, bindingAdapterPosition) }
+            binding.textDuration.text = formatDuration(item.durationMs) ?: ""
+            binding.textDuration.isVisible = !binding.textDuration.text.isNullOrEmpty()
+
+            // Ảnh bìa sử dụng Glide để giống Spotify
+            Glide.with(context)
+                .load(item.artworkUri ?: item.uri)
+                .placeholder(R.drawable.ic_music_note)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .centerCrop()
+                .into(binding.imageArt)
+
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onClick(item, position)
+                }
+            }
         }
     }
 
@@ -45,7 +67,6 @@ class SongAdapter(
         if (!item.artist.isNullOrBlank()) {
             parts += item.artist
         }
-        formatDuration(item.durationMs)?.let { parts += it }
         return if (parts.isEmpty()) fallback else parts.joinToString(" • ")
     }
 

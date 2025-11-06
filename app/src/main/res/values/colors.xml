@@ -1,23 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- 🎨 Nền tối xanh đậm -->
-    <color name="bg_start">#142238</color>
-    <color name="bg_center">#0F1B2C</color>
-    <color name="bg_end">#0B1626</color>
+    <!-- 🎨 Nền tối xanh đậm kiểu Spotify -->
+    <color name="bg_start">#191A1F</color>
+    <color name="bg_center">#141518</color>
+    <color name="bg_end">#101113</color>
+    <color name="bg_overlay">#1F1F23</color>
     <color name="outline">#26FFFFFF</color>  <!-- viền mờ 15% -->
+
     <!-- 🔤 Văn bản -->
     <color name="text_primary">#FFFFFFFF</color>        <!-- trắng -->
     <color name="text_secondary">#B3FFFFFF</color>     <!-- trắng nhạt 70% -->
     <color name="text_tertiary">#80FFFFFF</color>      <!-- trắng mờ 50% -->
 
+    <!-- 🌿 Điểm nhấn Spotify -->
+    <color name="spotify_green">#1DB954</color>
+
+    <!-- 🟩 Thẻ và chip -->
+    <color name="surface_card">#1E1F23</color>
+    <color name="surface_card_stroke">#33FFFFFF</color>
+    <color name="chip_background">#26272C</color>
+    <color name="chip_text">#E6FFFFFF</color>
+
     <!-- 🟨 TabLayout -->
-    <color name="tab_text_normal">#99FFFFFF</color>    <!-- chữ tab chưa chọn -->
+    <color name="tab_text_normal">#80FFFFFF</color>    <!-- chữ tab chưa chọn -->
     <color name="tab_text_selected">#FFFFFFFF</color>  <!-- chữ tab đang chọn -->
-    <color name="tab_indicator">#FFFFFFFF</color>        <!-- vạch vàng dưới tab -->
+    <color name="tab_indicator">#FFFFFFFF</color>        <!-- vạch sáng dưới tab -->
 
     <!-- 🟡 FAB -->
-    <color name="fab_yellow">#FFFFFFFF</color>
+    <color name="fab_yellow">#1DB954</color>
 
     <!-- 🔘 Seekbar -->
     <color name="seek_thumb">#FFFFFFFF</color>
@@ -26,7 +37,7 @@
 
     <!-- ❤️ Biểu tượng -->
     <color name="icon_primary">#FFFFFFFF</color>
-    <color name="icon_secondary">#B3FFFFFF</color>
+    <color name="icon_secondary">#7AFFFFFF</color>
 
 
 </resources>
