@@ -20,6 +20,12 @@
     <string name="tab_all_songs">Tất cả</string>
     <string name="tab_mp3_songs">Yêu thích</string>
     <string name="tab_recent_songs">Nghệ sĩ</string>
+    <string name="title_your_library">Thư viện của bạn</string>
+    <string name="chip_playlists">Playlist</string>
+    <string name="chip_artists">Nghệ sĩ</string>
+    <string name="chip_albums">Album</string>
+    <string name="action_shuffle_all">Phát ngẫu nhiên</string>
+    <string name="toast_no_songs">Không tìm thấy bài hát nào để phát.</string>
     <string name="empty_song_list">Không có bài hát nào</string>
     <string name="permission_audio_needed">Ứng dụng cần quyền đọc file âm thanh để hiển thị danh sách.</string>
     <string name="service_not_ready">Dịch vụ phát nhạc chưa sẵn sàng.</string>

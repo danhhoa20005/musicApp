@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.musicapp.R
 import com.example.musicapp.databinding.FragmentPlayerBinding
 import com.example.musicapp.ui.main.MainActivity
@@ -140,15 +142,21 @@ class PlayerFragment : Fragment() {
     private fun updateTitleArtist() {
         val s = (requireActivity() as MainActivity).musicService
         val cur = s?.currentSong()
-        binding.textTitle.text = cur?.title ?: "Unknown"
-        binding.textArtist.text = cur?.artist ?: "Unknown"
-        // Ảnh bìa: nếu bạn có bitmap/uri thì nạp vào binding.imageCover tại đây
+        binding.textTitle.text = cur?.title ?: getString(R.string.song_title_placeholder)
+        binding.textArtist.text = cur?.artist ?: getString(R.string.artist_placeholder)
+
+        Glide.with(binding.imageCover)
+            .load(cur?.artworkUri ?: cur?.uri)
+            .placeholder(R.drawable.ic_music_note)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .centerCrop()
+            .into(binding.imageCover)
     }
 
     private fun updatePlayPauseIcon() {
         val isPlaying = (requireActivity() as MainActivity).musicService?.isPlaying() == true
         binding.buttonPlayPause.setImageResource(
-            if (isPlaying) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play
+            if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
         )
     }
 

@@ -10,102 +10,104 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="24dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="32dp">
 
         <!-- Thanh tiêu đề nhỏ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:paddingVertical="8dp">
+            android:paddingBottom="12dp">
 
             <ImageView
                 android:id="@+id/buttonCollapse"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:tint="@color/text_secondary"
-                android:src="@android:drawable/arrow_down_float"
-                android:contentDescription="@string/close" />
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:padding="4dp"
+                android:contentDescription="@string/close"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_arrow_down"
+                app:tint="@color/icon_secondary" />
 
             <TextView
                 android:id="@+id/textNowPlaying"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text="@string/now_playing"
                 android:textAllCaps="true"
-                android:gravity="center"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:letterSpacing="0.15" />
 
             <ImageView
                 android:id="@+id/buttonMore"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                app:tint="@color/text_secondary"
-                android:src="@android:drawable/ic_menu_more"
-                android:contentDescription="@string/menu" />
+                android:padding="4dp"
+                android:contentDescription="@string/menu"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_more_vertical"
+                app:tint="@color/icon_secondary" />
         </LinearLayout>
 
-
-
         <!-- Ảnh bìa lớn -->
-
-        <!-- Tiêu đề bài hát -->
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageCover"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="12dp"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:background="@drawable/bg_art_placeholder"
             android:contentDescription="@string/cover_image"
             android:scaleType="centerCrop"
-
-            app:tint="@color/text_tertiary" />
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MusicApp.CornerExtraLarge"
+            app:srcCompat="@drawable/ic_music_note" />
 
         <TextView
             android:id="@+id/textTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:maxLines="2"
             android:text="@string/song_title_placeholder"
             android:textColor="@color/text_primary"
-            android:textSize="18sp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:gravity="center"
-            android:layout_marginTop="16dp" />
+            android:textSize="22sp" />
 
         <!-- Tên nghệ sĩ -->
         <TextView
             android:id="@+id/textArtist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
             android:text="@string/artist_placeholder"
             android:textColor="@color/text_secondary"
-            android:textSize="13sp"
-            android:gravity="center"
-            android:layout_marginBottom="8dp" />
+            android:textSize="14sp" />
 
         <!-- Thanh tiến trình -->
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="4dp"
-            android:thumbTint="@color/seek_thumb"
+            android:progressBackgroundTint="@color/seek_track"
             android:progressTint="@color/seek_progress"
-            android:progressBackgroundTint="@color/seek_track" />
+            android:thumbTint="@color/seek_thumb" />
 
         <!-- Thời gian (dùng weight để tách 2 đầu) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingHorizontal="4dp"
-            android:gravity="center_vertical">
+            android:paddingHorizontal="4dp">
 
             <TextView
                 android:id="@+id/textElapsed"
@@ -125,60 +127,65 @@
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Cụm điều khiển -->
+        <!-- Cụm điều khiển chính -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
+            android:orientation="horizontal"
+            android:paddingTop="24dp">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/buttonRepeat"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@android:color/transparent"
-                app:tint="@color/text_secondary"
-                android:src="@android:drawable/ic_menu_revert"
-                android:contentDescription="@string/repeat" />
+                android:padding="8dp"
+                android:contentDescription="@string/repeat"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_repeat"
+                app:tint="@color/icon_secondary" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/buttonPrev"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:background="@android:color/transparent"
-                app:tint="@color/text_primary"
-                android:src="@android:drawable/ic_media_previous"
-                android:contentDescription="@string/previous" />
+                android:padding="12dp"
+                android:contentDescription="@string/previous"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_skip_previous"
+                app:tint="@color/icon_primary" />
 
-            <ImageButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/buttonPlayPause"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:background="@android:color/transparent"
-                app:tint="@color/text_primary"
-                android:src="@android:drawable/ic_media_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
                 android:contentDescription="@string/playpause"
-                android:layout_marginHorizontal="16dp" />
+                app:backgroundTint="@color/spotify_green"
+                app:fabCustomSize="80dp"
+                app:fabSize="normal"
+                app:srcCompat="@drawable/ic_play"
+                app:tint="@android:color/black" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/buttonNext"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:background="@android:color/transparent"
-                app:tint="@color/text_primary"
-                android:src="@android:drawable/ic_media_next"
-                android:contentDescription="@string/next" />
+                android:padding="12dp"
+                android:contentDescription="@string/next"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_skip_next"
+                app:tint="@color/icon_primary" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/buttonShuffle"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@android:color/transparent"
-                app:tint="@color/text_secondary"
-                android:src="@android:drawable/ic_menu_rotate"
-                android:contentDescription="@string/shuffle" />
+                android:padding="8dp"
+                android:contentDescription="@string/shuffle"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_shuffle"
+                app:tint="@color/icon_secondary" />
         </LinearLayout>
 
     </LinearLayout>

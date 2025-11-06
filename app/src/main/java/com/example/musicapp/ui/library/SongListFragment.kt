@@ -13,7 +13,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.musicapp.R
 import com.example.musicapp.data.SongFilter
@@ -84,9 +83,6 @@ class SongListFragment : Fragment() {
         val songs = SongStore.loadDeviceSongs(requireContext(), filter)
         adapter.submitList(songs)
         binding.textEmpty.isVisible = songs.isEmpty()
-        if (songs.isNotEmpty()) {
-            binding.textEmpty.setText(R.string.empty_song_list)
-        }
     }
 
     private fun showEmptyState(@StringRes messageRes: Int = R.string.empty_song_list) {
