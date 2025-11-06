@@ -21,9 +21,7 @@ import com.example.musicapp.data.SongStore
 import com.example.musicapp.databinding.RecyclerSongsBinding
 import com.example.musicapp.ui.main.MainActivity
 
-/**
- * Fragment hiển thị danh sách bài hát với tuỳ chọn lọc.
- */
+
 class SongListFragment : Fragment() {
 
     companion object {

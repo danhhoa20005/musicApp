@@ -8,7 +8,12 @@ import android.content.Context
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerNotificationManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+// Helper tạo PlayerNotificationManager cho thông báo và màn hình khóa
 object PlaybackNotification {
 
     fun create(
@@ -27,25 +32,35 @@ object PlaybackNotification {
 
                 override fun createCurrentContentIntent(p: androidx.media3.common.Player): PendingIntent? {
                     val launch = context.packageManager.getLaunchIntentForPackage(context.packageName)
-                    return PendingIntent.getActivity(
-                        context, 0, launch, PendingIntent.FLAG_IMMUTABLE
-                    )
+                    return PendingIntent.getActivity(context, 0, launch, PendingIntent.FLAG_IMMUTABLE)
                 }
 
                 override fun getCurrentContentText(p: androidx.media3.common.Player) =
                     p.mediaMetadata.artist
 
+                // ✅ Lấy ảnh bìa nhúng trong MP3 nếu có (chạy nền, callback khi xong)
                 override fun getCurrentLargeIcon(
                     p: androidx.media3.common.Player,
                     cb: PlayerNotificationManager.BitmapCallback
-                ) = null
+                ): android.graphics.Bitmap? {
+                    val item = p.currentMediaItem ?: return null
+                    val uri = item.localConfiguration?.uri ?: return null
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val bmp = com.example.musicapp.data.artwork.ArtworkUtils
+                            .loadEmbeddedArtwork(context, uri)
+                        if (bmp != null) withContext(Dispatchers.Main) {
+                            cb.onBitmap(bmp)
+                        }
+                    }
+                    // Trả null ngay; khi ảnh đọc xong sẽ gọi cb.onBitmap(bmp)
+                    return null
+                }
             })
             .build().apply {
                 setSmallIcon(android.R.drawable.ic_media_play)
-
-                @Suppress("DEPRECATION") // Media3 hiện vẫn dùng compat token cho PlayerNotificationManager
+                @Suppress("DEPRECATION")
                 setMediaSessionToken(session.sessionCompatToken)
-
                 setPlayer(player)
             }
     }
