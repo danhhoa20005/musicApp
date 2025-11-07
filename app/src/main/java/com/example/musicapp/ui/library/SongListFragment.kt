@@ -20,6 +20,7 @@ import com.example.musicapp.data.SongFilter
 import com.example.musicapp.databinding.RecyclerSongsBinding
 import com.example.musicapp.ui.main.MainActivity
 import com.example.musicapp.ui.viewmodel.LibraryViewModel
+import com.example.musicapp.util.navigateFrom
 
 // SongListFragment - hiển thị danh sách theo bộ lọc, dùng ViewModel để nạp/cache
 class SongListFragment : Fragment() {
@@ -67,7 +68,10 @@ class SongListFragment : Fragment() {
                 return@SongAdapter
             }
             service.setPlaylist(list, startIndex = position, playNow = true)
-            findNavController().navigate(R.id.action_libraryFragment_to_playerFragment)
+            findNavController().navigateFrom(
+                R.id.libraryFragment,
+                R.id.action_libraryFragment_to_playerFragment
+            )
         }
 
         // recycler - layout dọc + gán adapter

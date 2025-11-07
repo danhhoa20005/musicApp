@@ -2,7 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/miniPlayer"
+    android:id="@+id/nowPlayingPeek"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="0dp"
@@ -22,7 +22,7 @@
         android:paddingVertical="10dp">
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/mini_imageArt"
+            android:id="@+id/peek_imageArt"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:contentDescription="@string/cover_image"
@@ -33,7 +33,7 @@
             app:srcCompat="@drawable/ic_logo" />
 
         <TextView
-            android:id="@+id/mini_textTitle"
+            android:id="@+id/peek_textTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -42,49 +42,49 @@
             android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:layout_marginStart="14dp"
-            app:layout_constraintEnd_toStartOf="@id/mini_btnPrev"
-            app:layout_constraintStart_toEndOf="@id/mini_imageArt"
-            app:layout_constraintTop_toTopOf="@id/mini_imageArt" />
+            app:layout_constraintEnd_toStartOf="@id/peek_btnPrev"
+            app:layout_constraintStart_toEndOf="@id/peek_imageArt"
+            app:layout_constraintTop_toTopOf="@id/peek_imageArt" />
 
         <TextView
-            android:id="@+id/mini_textSubtitle"
+            android:id="@+id/peek_textSubtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/text_secondary"
             android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="@id/mini_imageArt"
-            app:layout_constraintEnd_toStartOf="@id/mini_btnPrev"
-            app:layout_constraintStart_toStartOf="@id/mini_textTitle"
-            app:layout_constraintTop_toBottomOf="@id/mini_textTitle" />
+            app:layout_constraintBottom_toBottomOf="@id/peek_imageArt"
+            app:layout_constraintEnd_toStartOf="@id/peek_btnPrev"
+            app:layout_constraintStart_toStartOf="@id/peek_textTitle"
+            app:layout_constraintTop_toBottomOf="@id/peek_textTitle" />
 
         <ImageView
-            android:id="@+id/mini_btnPrev"
+            android:id="@+id/peek_btnPrev"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="8dp"
             app:tint="@color/icon_secondary"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/mini_btnPlayPause"
+            app:layout_constraintEnd_toStartOf="@id/peek_btnPlayPause"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_skip_right" />
 
         <ImageView
-            android:id="@+id/mini_btnPlayPause"
+            android:id="@+id/peek_btnPlayPause"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:padding="8dp"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/mini_btnNext"
+            app:layout_constraintEnd_toStartOf="@id/peek_btnNext"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_play"
             app:tint="@color/text_primary" />
 
         <ImageView
-            android:id="@+id/mini_btnNext"
+            android:id="@+id/peek_btnNext"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="8dp"

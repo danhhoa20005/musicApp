@@ -57,12 +57,10 @@
     </LinearLayout>
 
     <include
-        android:id="@+id/bottomSheet"
-        layout="@layout/view_mini_player_sheet"
+        layout="@layout/view_now_playing_sheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="bottom"
-        android:elevation="10dp"
-        app:layout_behavior="@string/bottom_sheet_behavior"/>
+        android:elevation="10dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
