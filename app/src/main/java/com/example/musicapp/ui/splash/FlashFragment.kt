@@ -9,9 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.musicapp.R
+import com.example.musicapp.util.navigateFrom
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+// FlashFragment - màn splash đơn giản trước khi vào thư viện
 class FlashFragment : Fragment() {
 
     private var navigated = false
@@ -27,7 +29,10 @@ class FlashFragment : Fragment() {
             delay(800)
             if (!navigated && isAdded) {
                 navigated = true
-                findNavController().navigate(R.id.action_flashFragment_to_libraryFragment)
+                findNavController().navigateFrom(
+                    R.id.flashFragment,
+                    R.id.action_flashFragment_to_libraryFragment
+                )
             }
         }
 
