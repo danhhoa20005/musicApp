@@ -5,21 +5,14 @@ import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
 import com.example.musicapp.data.model.Song
-import java.util.concurrent.TimeUnit
 
 object SongStore {
 
     private const val MIN_DURATION_MS = 5_000
-    private val MP3_MIME_TYPES = arrayOf(
-        "audio/mpeg",
-        "audio/mp3",
-        "audio/mpeg3",
-        "audio/x-mpeg"
-    )
-    private val RECENT_WINDOW_SECONDS = TimeUnit.DAYS.toSeconds(30)
 
     fun loadDeviceSongs(context: Context, filter: SongFilter = SongFilter.ALL): List<Song> {
         val out = ArrayList<Song>()
+
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
         } else {
@@ -37,40 +30,18 @@ object SongStore {
             MediaStore.Audio.Media.DISPLAY_NAME
         )
 
-        val selectionParts = mutableListOf(
-            "${MediaStore.Audio.Media.IS_MUSIC}=1",
-            "${MediaStore.Audio.Media.DURATION}>=?"
-        )
-        val selectionArgs = mutableListOf(MIN_DURATION_MS.toString())
+        // Chỉ lấy nhạc thật và đủ dài
+        val selection = "${MediaStore.Audio.Media.IS_MUSIC}=1 AND ${MediaStore.Audio.Media.DURATION}>=?"
+        val selectionArgs = arrayOf(MIN_DURATION_MS.toString())
 
-        when (filter) {
-            SongFilter.MP3_ONLY -> {
-                val mimeClause = MP3_MIME_TYPES.joinToString(" OR ") {
-                    "${MediaStore.Audio.Media.MIME_TYPE}=?"
-                }
-                selectionParts += "($mimeClause)"
-                selectionArgs += MP3_MIME_TYPES
-            }
-
-            SongFilter.RECENT -> {
-                val recentThreshold = (System.currentTimeMillis() / 1000) - RECENT_WINDOW_SECONDS
-                selectionParts += "${MediaStore.Audio.Media.DATE_ADDED}>=?"
-                selectionArgs += recentThreshold.toString()
-            }
-
-            else -> Unit
-        }
-
-        val sortOrder = when (filter) {
-            SongFilter.RECENT -> "${MediaStore.Audio.Media.DATE_ADDED} DESC"
-            else -> "${MediaStore.Audio.Media.TITLE} COLLATE NOCASE ASC"
-        }
+        // Sắp xếp A→Z theo tiêu đề
+        val sortOrder = "${MediaStore.Audio.Media.TITLE} COLLATE NOCASE ASC"
 
         context.contentResolver.query(
             collection,
             projection,
-            selectionParts.joinToString(" AND "),
-            selectionArgs.toTypedArray(),
+            selection,
+            selectionArgs,
             sortOrder
         )?.use { cursor ->
             val iId = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
@@ -90,11 +61,8 @@ object SongStore {
                 val duration = cursor.getLong(iDuration).coerceAtLeast(0L)
                 val mime = cursor.getString(iMime)
                 val dateAdded = cursor.getLong(iDateAdded)
-                val displayName = cursor.getString(iDisplayName)
-
-                if (filter == SongFilter.MP3_ONLY && !isMp3(mime, displayName)) {
-                    continue
-                }
+                // displayName vẫn đọc nhưng không dùng thêm bộ lọc nào
+                // val displayName = cursor.getString(iDisplayName)
 
                 val uri = ContentUris.withAppendedId(collection, id)
 
@@ -113,17 +81,6 @@ object SongStore {
             }
         }
 
-        return when (filter) {
-            SongFilter.RECENT -> out.sortedByDescending { it.dateAddedSec }
-            else -> out
-        }
-    }
-
-    private fun isMp3(mime: String?, displayName: String?): Boolean {
-        val normalizedMime = mime?.lowercase()
-        if (normalizedMime != null && MP3_MIME_TYPES.any { it == normalizedMime }) {
-            return true
-        }
-        return displayName?.endsWith(".mp3", ignoreCase = true) == true
+        return out
     }
 }

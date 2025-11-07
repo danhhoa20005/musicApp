@@ -2,7 +2,17 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_main"
-    app:startDestination="@id/libraryFragment">
+    app:startDestination="@id/flashFragment">
+
+    <!-- Splash (Flash) -->
+    <fragment
+        android:id="@+id/flashFragment"
+        android:name="com.example.musicapp.ui.flash.FlashFragment"
+        android:label="Flash">
+        <action
+            android:id="@+id/action_flashFragment_to_libraryFragment"
+            app:destination="@id/libraryFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/libraryFragment"

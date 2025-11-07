@@ -2,61 +2,44 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_dark_gradient">
 
-    <!-- Nội dung thư viện với header kiểu Spotify -->
     <LinearLayout
+        android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
         android:paddingBottom="20dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:clipToPadding="false">
 
-        <!-- Cụm chip lọc tương tự Spotify Library -->
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroup"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="12dp"
-            app:singleSelection="false"
-            app:chipSpacing="8dp">
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp">
 
-            <com.google.android.material.chip.Chip
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/textTitleLibrary"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:clickable="false"
-                android:text="@string/chip_playlists"
-                android:textColor="@color/chip_text"
-                app:chipBackgroundColor="@color/chip_background" />
-
-            <com.google.android.material.chip.Chip
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:text="@string/chip_artists"
-                android:textColor="@color/chip_text"
-                app:chipBackgroundColor="@color/chip_background" />
-
-            <com.google.android.material.chip.Chip
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:text="@string/chip_albums"
-                android:textColor="@color/chip_text"
-                app:chipBackgroundColor="@color/chip_background" />
-        </com.google.android.material.chip.ChipGroup>
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/title_your_library"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:background="@android:color/transparent"
             app:tabIndicatorFullWidth="false"
             app:tabIndicatorColor="@color/tab_indicator"
@@ -73,16 +56,13 @@
             android:clipToPadding="false"/>
     </LinearLayout>
 
-    <!-- Nút phát ngẫu nhiên nổi -->
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fabShuffle"
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/bottomSheet"
+        layout="@layout/view_mini_player_sheet"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="20dp"
-        android:text="@string/action_shuffle_all"
-        android:textColor="@android:color/black"
-        app:backgroundTint="@color/fab_yellow"
-        app:icon="@drawable/ic_shuffle"
-        app:iconTint="@android:color/black"/>
+        android:layout_gravity="bottom"
+        android:elevation="10dp"
+        app:layout_behavior="@string/bottom_sheet_behavior"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

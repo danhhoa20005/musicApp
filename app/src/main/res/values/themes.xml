@@ -1,9 +1,22 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<resources>
+
+    <!-- Base - gom cấu hình chung -->
     <style name="Base.Theme.MusicApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- tuỳ chỉnh màu sắc nếu muốn -->
+        <!-- <item name="colorPrimary">@color/purple_200</item> -->
     </style>
 
+    <!-- Theme chính của app -->
     <style name="Theme.MusicApp" parent="Base.Theme.MusicApp" />
+
+    <!-- Theme Splash (Android 12+) -->
+    <style name="Theme.MusicApp.Splash" parent="Theme.SplashScreen">
+        <!-- icon hiển thị giữa màn hình khởi động -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <!-- nền của màn hình khởi động -->
+        <item name="windowSplashScreenBackground">@android:color/black</item>
+        <!-- theme sẽ áp sau khi splash biến mất -->
+        <item name="postSplashScreenTheme">@style/Theme.MusicApp</item>
+    </style>
+
 </resources>

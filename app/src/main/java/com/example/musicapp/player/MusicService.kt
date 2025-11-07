@@ -18,51 +18,56 @@ import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerNotificationManager
 import com.example.musicapp.data.model.Song
 
-// Service phát nhạc chạy nền
+// Service phát nhạc chạy nền: quản lý ExoPlayer, MediaSession, notification
 class MusicService : Service() {
 
     companion object {
-        private const val CHANNEL_ID = "music_channel"
-        private const val NOTIFICATION_ID = 1001
+        private const val CHANNEL_ID = "music_channel"   // id kênh thông báo
+        private const val NOTIFICATION_ID = 1001         // id notification
     }
 
-    // Cho Activity/Fragment bind vào Service
+    // Binder cho Activity/Fragment bind tới Service
     inner class LocalBinder : Binder() { fun getService() = this@MusicService }
     private val binder = LocalBinder()
 
-    private lateinit var player: ExoPlayer
-    private var session: MediaSession? = null
-    private var notifier: PlayerNotificationManager? = null
-    private var playlist: List<Song> = emptyList()
+    // Thành phần chính
+    private lateinit var player: ExoPlayer               // engine phát nhạc
+    private var session: MediaSession? = null            // MediaSession để hệ thống điều khiển
+    private var notifier: PlayerNotificationManager? = null // cập nhật notification media
+    private var playlist: List<Song> = emptyList()       // danh sách bài đang dùng
 
     override fun onCreate() {
         super.onCreate()
 
-        // Kênh thông báo (bắt buộc từ Android 8+)
+        // Tạo kênh thông báo (nhẹ, không rung/âm thanh)
         val nm = getSystemService(NotificationManager::class.java)
         if (nm.getNotificationChannel(CHANNEL_ID) == null) {
-            nm.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL_ID,
-                    "Music Playback",
-                    NotificationManager.IMPORTANCE_LOW
-                )
-            )
+            val ch = NotificationChannel(
+                CHANNEL_ID,
+                "Music Playback",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                setSound(null, null)
+                enableVibration(false)
+                enableLights(false)
+            }
+            nm.createNotificationChannel(ch)
         }
 
-        // Tạo ExoPlayer và khai báo phát nhạc
+        // Khởi tạo ExoPlayer + cấu hình audio
         player = ExoPlayer.Builder(this).build().apply {
-            val attrs = androidx.media3.common.AudioAttributes.Builder()
+            val attrs = androidx.media3.common.AudioAttributes
+                .Builder()
                 .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
                 .setUsage(C.USAGE_MEDIA)
                 .build()
-            setAudioAttributes(attrs, true)
+            setAudioAttributes(attrs, true)              // xin audio focus khi phát
         }
 
-        // Tạo MediaSession để hệ thống điều khiển (màn khóa, tai nghe…)
+        // MediaSession để hiển thị/điều khiển từ hệ thống/BT
         session = MediaSession.Builder(this, player).build()
 
-        // Tạo thông báo media gắn với session + player
+        // Tạo notifier hiển thị notification media
         notifier = PlaybackNotification.create(
             context = this,
             session = session!!,
@@ -71,76 +76,88 @@ class MusicService : Service() {
             notificationId = NOTIFICATION_ID
         )
 
-        // Đưa Service lên foreground với thông báo tối thiểu
-        startForeground(
-            NOTIFICATION_ID,
-            NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_media_play)
-                .setContentTitle("MusicApp")
-                .setContentText("Đang phát nhạc")
-                .build()
-        )
+        // Lắng nghe trạng thái player để cập nhật notification/foreground
+        player.addListener(object : Player.Listener {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                if (isPlaying) {
+                    // Đang phát: gắn player vào notifier + đưa lên foreground
+                    notifier?.setPlayer(player)
+                    showForegroundNow("Đang phát nhạc")
+                } else {
+                    // Tạm dừng: GIỮ notification để người dùng phát lại, hạ foreground
+                    notifier?.setPlayer(player)
+                    stopForeground(false)                // không xóa notification
+                }
+            }
+            override fun onPlaybackStateChanged(state: Int) {
+                // Khi Idle/Ended: ẩn notification hẳn
+                if (state == Player.STATE_ENDED || state == Player.STATE_IDLE) {
+                    notifier?.setPlayer(null)
+                    hideNotification()
+                }
+            }
+        })
+        // Không startForeground ở đây; chỉ khi bắt đầu phát
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Giữ service sống khi bị dọn; pause không làm mất service
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder = binder
 
     override fun onDestroy() {
-        notifier?.setPlayer(null) // ngắt liên kết thông báo
-        session?.release()        // giải phóng session
-        player.release()          // tắt player
+        // Dọn tài nguyên khi service bị hủy
+        hideNotification()
+        notifier?.setPlayer(null)
+        session?.release()
+        player.release()
         super.onDestroy()
     }
 
-    // Nạp danh sách bài và phát
+    // ---------- API điều khiển phát nhạc ----------
+
+    // Gán playlist vào player, chuẩn bị và có thể phát ngay
     fun setPlaylist(list: List<Song>, startIndex: Int = 0, playNow: Boolean = false) {
         playlist = list
-
         val items = list.map { s ->
             val meta = MediaMetadata.Builder()
                 .setTitle(s.title)
                 .setArtist(s.artist)
                 .setAlbumTitle(s.album ?: "")
                 .build()
-
             MediaItem.Builder()
                 .setUri(s.uri)
                 .setMediaId(s.id)
                 .setMediaMetadata(meta)
                 .build()
         }
-
         player.setMediaItems(items, startIndex, 0)
         player.prepare()
         if (playNow) player.play()
     }
 
-    // Điều khiển
-    fun play() = player.play()
-    fun pause() = player.pause()
+    fun play() = player.play()                          // phát
+    fun pause() = player.pause()                        // tạm dừng (không tắt service)
     fun toggle() = if (player.isPlaying) pause() else play()
-    fun next() = player.seekToNext()
-    fun previous() = player.seekToPrevious()
-    fun seekTo(ms: Int) = player.seekTo(ms.toLong())
+    fun next() = player.seekToNext()                    // bài kế
+    fun previous() = player.seekToPrevious()            // bài trước
+    fun seekTo(ms: Int) = player.seekTo(ms.toLong())    // tua
 
-    // Trạng thái/thông tin
-    fun isPlaying() = player.isPlaying
+    fun isPlaying() = player.isPlaying                  // trạng thái phát
     fun duration() = player.duration.toInt().coerceAtLeast(0)
     fun position() = player.currentPosition.toInt()
     fun currentSong() = playlist.getOrNull(player.currentMediaItemIndex)
     fun getPlaylist() = playlist
 
-    fun addPlayerListener(l: Player.Listener) { player.addListener(l) }
+    fun addPlayerListener(l: Player.Listener) { player.addListener(l) }    // lắng nghe từ UI
     fun removePlayerListener(l: Player.Listener) { player.removeListener(l) }
 
-
-    // Shuffle
-    fun toggleShuffle() {
-        player.shuffleModeEnabled = !player.shuffleModeEnabled
-    }
+    fun toggleShuffle() { player.shuffleModeEnabled = !player.shuffleModeEnabled } // ngẫu nhiên
     fun isShuffleOn(): Boolean = player.shuffleModeEnabled
 
-    // Repeat: OFF -> ONE -> ALL -> OFF ...
-    fun cycleRepeat() {
+    fun cycleRepeat() {                                   // đổi chế độ lặp: OFF -> ONE -> ALL
         player.repeatMode = when (player.repeatMode) {
             Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE
             Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_ALL
@@ -149,4 +166,30 @@ class MusicService : Service() {
     }
     fun getRepeatMode(): Int = player.repeatMode
 
+    // Dừng hẳn (tuỳ chọn gắn vào nút Close)
+    fun stopAllAndQuit() {
+        runCatching { player.stop() }
+        stopForeground(true)                               // xóa notification
+        stopSelf()                                         // tắt service
+    }
+
+
+
+    // Đưa service lên foreground bằng một thông báo tối giản
+    private fun showForegroundNow(text: String) {
+        val n = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.ic_media_play)
+            .setContentTitle("Hòa đẹp trai siêu cấp vippro 9x ")
+            .setContentText(text)
+            .setOngoing(true)
+            .setSilent(true)
+            .build()
+        startForeground(NOTIFICATION_ID, n)
+    }
+
+    // Hạ foreground và hủy notification
+    private fun hideNotification() {
+        stopForeground(Service.STOP_FOREGROUND_REMOVE)
+        getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
+    }
 }

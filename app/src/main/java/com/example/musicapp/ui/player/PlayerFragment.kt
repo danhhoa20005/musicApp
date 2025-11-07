@@ -1,71 +1,29 @@
 package com.example.musicapp.ui.player
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.media3.common.MediaItem
+import androidx.fragment.app.activityViewModels
 import androidx.media3.common.Player
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.musicapp.R
 import com.example.musicapp.databinding.FragmentPlayerBinding
-import com.example.musicapp.ui.main.MainActivity
+import com.example.musicapp.ui.viewmodel.NowPlayingViewModel
+import com.example.musicapp.ui.viewmodel.ServiceConnectionViewModel
 
 class PlayerFragment : Fragment() {
 
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
 
-    private val handler = Handler(Looper.getMainLooper())
-    private val ticker = object : Runnable {
-        override fun run() {
-            val s = (requireActivity() as MainActivity).musicService
-            if (s != null) {
-                val d = s.duration()
-                val p = s.position()
-                if (d > 0) {
-                    binding.seekBar.max = d
-                    binding.seekBar.progress = p
-                    binding.textElapsed.text = format(p)
-                    binding.textDuration.text = format(d)
-                } else {
-                    binding.seekBar.progress = 0
-                    binding.textElapsed.text = "0:00"
-                    binding.textDuration.text = "0:00"
-                }
-            }
-            handler.postDelayed(this, 500L)
-        }
-    }
-
-    private val playerListener = object : Player.Listener {
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            updatePlayPauseIcon()
-        }
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            updateTitleArtist()
-        }
-        override fun onEvents(player: Player, events: Player.Events) {
-            if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) {
-                val s = (requireActivity() as MainActivity).musicService
-                val d = s?.duration() ?: 0
-                val p = s?.position() ?: 0
-                if (d > 0) {
-                    binding.seekBar.max = d
-                    binding.seekBar.progress = p
-                    binding.textElapsed.text = format(p)
-                    binding.textDuration.text = format(d)
-                }
-            }
-        }
-    }
+    private val serviceVM: ServiceConnectionViewModel by activityViewModels()
+    private val nowVM: NowPlayingViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPlayerBinding.inflate(inflater, container, false)
@@ -75,100 +33,85 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Vuốt/nút Back và nút mũi tên nhỏ → quay lại Library
+
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
-            object : OnBackPressedCallback(true) { override fun handleOnBackPressed() { findNavController().navigateUp() } }
-        )
-        binding.buttonCollapse.setOnClickListener { findNavController().navigateUp() }
-        binding.buttonMore.setOnClickListener { /* TODO: mở menu tùy chọn nếu cần */ }
-
-        val s = (requireActivity() as MainActivity).musicService
-
-        // Play/Pause
-        binding.buttonPlayPause.setOnClickListener {
-            s?.toggle()
-            updatePlayPauseIcon()
-        }
-
-        // Next/Prev
-        binding.buttonNext.setOnClickListener { s?.next() }
-        binding.buttonPrev.setOnClickListener { s?.previous() }
-
-        // Shuffle/Repeat (cần thêm 2 hàm trong MusicService, xem bên dưới)
-        binding.buttonShuffle.setOnClickListener {
-            s?.toggleShuffle()
-            updateShuffleIcon()
-        }
-        binding.buttonRepeat.setOnClickListener {
-            s?.cycleRepeat()
-            updateRepeatIcon()
-        }
-
-        // SeekBar
-        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) (requireActivity() as MainActivity).musicService?.seekTo(progress)
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() { findNavController().navigateUp() }
             }
+        )
+        binding.buttonBack.setOnClickListener { findNavController().navigateUp() }
+        binding.buttonBackRight.setOnClickListener { findNavController().navigateUp() }
+        // điều khiển
+        binding.buttonPlayPause.setOnClickListener { serviceVM.service.value?.toggle() }
+        binding.buttonNext.setOnClickListener { serviceVM.service.value?.next() }
+        binding.buttonPrev.setOnClickListener { serviceVM.service.value?.previous() }
+        binding.buttonShuffle.setOnClickListener { serviceVM.service.value?.toggleShuffle() }
+        binding.buttonRepeat.setOnClickListener { serviceVM.service.value?.cycleRepeat() }
+
+        // seekbar
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, p: Int, fromUser: Boolean) { if (fromUser) serviceVM.service.value?.seekTo(p) }
             override fun onStartTrackingTouch(sb: SeekBar?) {}
             override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
 
-        // Cập nhật ban đầu
-        binding.textNowPlaying.setText(R.string.now_playing)
-        updateTitleArtist()
-        updatePlayPauseIcon()
-        updateShuffleIcon()
-        updateRepeatIcon()
-        handler.post(ticker)
-    }
+        // bài hiện tại
+        nowVM.currentSong.observe(viewLifecycleOwner) { song ->
+            binding.textTitle.text = song?.title ?: getString(R.string.song_title_placeholder)
+            binding.textArtist.text = song?.artist ?: getString(R.string.artist_placeholder)
+            Glide.with(binding.imageCover)
+                .load(song?.artworkUri ?: song?.uri)
+                .placeholder(R.drawable.ic_logo)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .centerCrop()
+                .into(binding.imageCover)
+        }
 
-    override fun onStart() {
-        super.onStart()
-        (requireActivity() as MainActivity).musicService?.addPlayerListener(playerListener)
-    }
+        // trạng thái phát
+        nowVM.isPlaying.observe(viewLifecycleOwner) { playing ->
+            binding.buttonPlayPause.setImageResource(if (playing) R.drawable.ic_pause else R.drawable.ic_play)
+        }
 
-    override fun onStop() {
-        (requireActivity() as MainActivity).musicService?.removePlayerListener(playerListener)
-        super.onStop()
+        // shuffle/repeat
+        nowVM.shuffleOn.observe(viewLifecycleOwner) { on ->
+            binding.buttonShuffle.imageAlpha = if (on) 255 else 120
+        }
+        nowVM.repeatMode.observe(viewLifecycleOwner) { mode ->
+            binding.buttonRepeat.imageAlpha = if (mode == Player.REPEAT_MODE_OFF) 120 else 255
+        }
+
+        // tiến độ
+        nowVM.durationMs.observe(viewLifecycleOwner) { dur ->
+            if (dur > 0) {
+                binding.seekBar.max = dur
+                binding.textDuration.text = format(dur)
+            } else {
+                binding.seekBar.max = 0
+                binding.textDuration.text = "0:00"
+            }
+        }
+        nowVM.positionMs.observe(viewLifecycleOwner) { pos ->
+            if (binding.seekBar.max > 0) {
+                binding.seekBar.progress = pos
+                binding.textElapsed.text = format(pos)
+            } else {
+                binding.textElapsed.text = "0:00"
+            }
+        }
+
+        // gắn service khi có
+        serviceVM.service.observe(viewLifecycleOwner) { srv ->
+            nowVM.attachService(srv)
+        }
+
+        // nhãn
+        binding.textHeaderTitle.setText(R.string.now_playing)
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
-        handler.removeCallbacks(ticker)
         _binding = null
-    }
-
-    private fun updateTitleArtist() {
-        val s = (requireActivity() as MainActivity).musicService
-        val cur = s?.currentSong()
-        binding.textTitle.text = cur?.title ?: getString(R.string.song_title_placeholder)
-        binding.textArtist.text = cur?.artist ?: getString(R.string.artist_placeholder)
-
-        Glide.with(binding.imageCover)
-            .load(cur?.artworkUri ?: cur?.uri)
-            .placeholder(R.drawable.ic_music_note)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .centerCrop()
-            .into(binding.imageCover)
-    }
-
-    private fun updatePlayPauseIcon() {
-        val isPlaying = (requireActivity() as MainActivity).musicService?.isPlaying() == true
-        binding.buttonPlayPause.setImageResource(
-            if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
-        )
-    }
-
-    private fun updateShuffleIcon() {
-        val enabled = (requireActivity() as MainActivity).musicService?.isShuffleOn() == true
-        binding.buttonShuffle.imageAlpha = if (enabled) 255 else 120
-    }
-
-    private fun updateRepeatIcon() {
-        val mode = (requireActivity() as MainActivity).musicService?.getRepeatMode() ?: Player.REPEAT_MODE_OFF
-        // Đơn giản: sáng khi != OFF
-        binding.buttonRepeat.imageAlpha = if (mode == Player.REPEAT_MODE_OFF) 120 else 255
+        super.onDestroyView()
     }
 
     private fun format(ms: Int): String {

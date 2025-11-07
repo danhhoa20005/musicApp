@@ -11,32 +11,42 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
-    <!-- Android 13+: muốn hiện notification phải xin quyền này -->
+    <!-- Android 13+: quyền hiện thông báo -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <!-- Nếu có gọi API/ảnh bìa online mới cần; phát file trong máy thì có thể bỏ -->
+    <!-- Nếu phát online mới cần -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
-        android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        android:theme="@style/Theme.MusicApp">
 
+        <!-- MainActivity là LAUNCHER. NavGraph startDestination = flashFragment -->
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.MusicApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Service: KHÔNG được ghi .kt; phải là tên lớp -->
+        <!-- (Tuỳ chọn) Giữ SplashActivity nhưng KHÔNG LAUNCHER, hoặc xoá hẳn nếu đã chuyển sang FlashFragment -->
+        <!--
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MusicApp.Splash" />
+        -->
+
+        <!-- Service phát nhạc -->
         <service
             android:name=".player.MusicService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
-        <!-- Receiver cho nút tai nghe / lockscreen (Media buttons) -->
+        <!-- Media buttons (tai nghe / lockscreen) -->
         <receiver
             android:name="androidx.media.session.MediaButtonReceiver"
             android:exported="false">

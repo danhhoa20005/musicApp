@@ -8,14 +8,11 @@ import android.content.Context
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerNotificationManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-// Helper tạo PlayerNotificationManager cho thông báo và màn hình khóa
+// PlaybackNotification - tạo PlayerNotificationManager cho thông báo/màn hình khóa
 object PlaybackNotification {
 
+    // create - cấu hình và trả về PlayerNotificationManager (không dùng artwork)
     fun create(
         context: Context,
         session: MediaSession,
@@ -27,35 +24,24 @@ object PlaybackNotification {
             .setChannelImportance(NotificationManager.IMPORTANCE_LOW)
             .setMediaDescriptionAdapter(object : PlayerNotificationManager.MediaDescriptionAdapter {
 
+                // tiêu đề
                 override fun getCurrentContentTitle(p: androidx.media3.common.Player) =
                     p.mediaMetadata.title ?: "MusicApp"
 
+                // chạm thông báo → mở app
                 override fun createCurrentContentIntent(p: androidx.media3.common.Player): PendingIntent? {
                     val launch = context.packageManager.getLaunchIntentForPackage(context.packageName)
                     return PendingIntent.getActivity(context, 0, launch, PendingIntent.FLAG_IMMUTABLE)
                 }
 
+                // nghệ sĩ (nếu có)
                 override fun getCurrentContentText(p: androidx.media3.common.Player) =
                     p.mediaMetadata.artist
 
-                // ✅ Lấy ảnh bìa nhúng trong MP3 nếu có (chạy nền, callback khi xong)
                 override fun getCurrentLargeIcon(
                     p: androidx.media3.common.Player,
                     cb: PlayerNotificationManager.BitmapCallback
-                ): android.graphics.Bitmap? {
-                    val item = p.currentMediaItem ?: return null
-                    val uri = item.localConfiguration?.uri ?: return null
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val bmp = com.example.musicapp.data.artwork.ArtworkUtils
-                            .loadEmbeddedArtwork(context, uri)
-                        if (bmp != null) withContext(Dispatchers.Main) {
-                            cb.onBitmap(bmp)
-                        }
-                    }
-                    // Trả null ngay; khi ảnh đọc xong sẽ gọi cb.onBitmap(bmp)
-                    return null
-                }
+                ): android.graphics.Bitmap? = null
             })
             .build().apply {
                 setSmallIcon(android.R.drawable.ic_media_play)

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <!-- Gradient tối mềm hơn để giống Spotify -->
+    <!-- Sáng hơn ~12% so với bộ cũ -->
     <gradient
         android:type="linear"
         android:angle="270"
-        android:startColor="@color/bg_start"
-        android:centerColor="@color/bg_center"
-        android:endColor="@color/bg_end"
-        android:dither="true" />
+        android:startColor="#141C19"
+    android:centerColor="#1A2A22"
+    android:endColor="#101714"
+    android:dither="true" />
 
     <corners android:radius="0dp" />
 </shape>

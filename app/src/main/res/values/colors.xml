@@ -1,43 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- 🎨 Nền tối xanh đậm kiểu Spotify -->
     <color name="bg_start">#191A1F</color>
     <color name="bg_center">#141518</color>
     <color name="bg_end">#101113</color>
     <color name="bg_overlay">#1F1F23</color>
-    <color name="outline">#26FFFFFF</color>  <!-- viền mờ 15% -->
+    <color name="outline">#26FFFFFF</color>
 
-    <!-- 🔤 Văn bản -->
-    <color name="text_primary">#FFFFFFFF</color>        <!-- trắng -->
-    <color name="text_secondary">#B3FFFFFF</color>     <!-- trắng nhạt 70% -->
-    <color name="text_tertiary">#80FFFFFF</color>      <!-- trắng mờ 50% -->
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="text_tertiary">#80FFFFFF</color>
 
-    <!-- 🌿 Điểm nhấn Spotify -->
     <color name="spotify_green">#1DB954</color>
 
-    <!-- 🟩 Thẻ và chip -->
+    <!-- Thẻ và chip -->
     <color name="surface_card">#1E1F23</color>
     <color name="surface_card_stroke">#33FFFFFF</color>
     <color name="chip_background">#26272C</color>
     <color name="chip_text">#E6FFFFFF</color>
 
-    <!-- 🟨 TabLayout -->
-    <color name="tab_text_normal">#80FFFFFF</color>    <!-- chữ tab chưa chọn -->
-    <color name="tab_text_selected">#FFFFFFFF</color>  <!-- chữ tab đang chọn -->
-    <color name="tab_indicator">#FFFFFFFF</color>        <!-- vạch sáng dưới tab -->
+    <!-- TabLayout -->
+    <color name="tab_text_normal">#80FFFFFF</color>
+    <color name="tab_text_selected">#FFFFFFFF</color>
+    <color name="tab_indicator">#FFFFFFFF</color>
 
-    <!-- 🟡 FAB -->
     <color name="fab_yellow">#1DB954</color>
 
-    <!-- 🔘 Seekbar -->
     <color name="seek_thumb">#FFFFFFFF</color>
     <color name="seek_progress">#FFFFFFFF</color>
     <color name="seek_track">#33FFFFFF</color>
 
-    <!-- ❤️ Biểu tượng -->
     <color name="icon_primary">#FFFFFFFF</color>
     <color name="icon_secondary">#7AFFFFFF</color>
 
+    <color name="black">#000000</color>
+    <color name="text_white">#FFFFFFFF</color>
+    <color name="secondary">#FFD54F</color>
 
 </resources>

@@ -6,36 +6,12 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_dark_gradient">
 
-    <!-- Thanh top theo phong cách Spotify -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:liftOnScroll="false">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="16dp"
-            app:navigationIcon="@drawable/ic_menu"
-            app:title="@string/title_your_library"
-            app:titleTextColor="@color/text_primary"
-            app:titleCentered="false"
-            app:menu="@menu/menu_main" />
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- Nội dung chính đặt trong NavHost -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/navHost"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:navGraph="@navigation/nav_main" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

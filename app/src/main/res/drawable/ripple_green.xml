@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Nhấn: rõ vừa đủ (≈ 36% alpha) -->
+    <item
+        android:state_pressed="true"
+        android:color="#5C1DB954" />
+
+    <!-- Focus: nhẹ hơn nhấn (≈ 28% alpha) -->
+    <item
+        android:state_focused="true"
+        android:color="#471DB954" />
+
+    <!-- Hover (chuột): rất nhẹ (≈ 20% alpha) -->
+    <item
+        android:state_hovered="true"
+        android:color="#331DB954" />
+
+    <!-- Mặc định: mờ tinh tế (≈ 14% alpha) -->
+    <item
+        android:color="#241DB954" />
+</selector>

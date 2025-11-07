@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <group
+        android:scaleX="-1"
+        android:pivotX="12"
+        android:pivotY="12">
+
+        <!-- Bài trước (đã lật thành Bài tiếp) -->
+        <path
+            android:fillColor="@color/icon_primary"
+            android:pathData="M18,6v12h-2V6h2z" />
+        <path
+            android:fillColor="@color/icon_primary"
+            android:pathData="M15.5,12L6,18V6l9.5,6z" />
+    </group>
+</vector>
