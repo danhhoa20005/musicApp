@@ -29,4 +29,6 @@
     <string name="empty_song_list">Không có bài hát nào</string>
     <string name="permission_audio_needed">Ứng dụng cần quyền đọc file âm thanh để hiển thị danh sách.</string>
     <string name="service_not_ready">Dịch vụ phát nhạc chưa sẵn sàng.</string>
+    <string name="now_playing_peek_empty_title">Chưa phát bài nào</string>
+    <string name="now_playing_peek_empty_subtitle">Chọn một bài hát để bắt đầu phát.</string>
 </resources>
