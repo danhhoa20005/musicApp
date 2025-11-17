@@ -1,99 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nowPlayingPeek"
+    android:id="@+id/miniPlayerRoot"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="0dp"
-    android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="#0E5C2A"
-    app:cardCornerRadius="0dp"
-    app:cardElevation="0dp"
-    app:strokeWidth="0dp"
-    app:cardUseCompatPadding="false"
-    app:cardPreventCornerOverlap="false">
+    android:layout_height="68dp"
+    android:background="@android:color/transparent"
+    android:paddingStart="12dp"
+    android:paddingEnd="8dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/nowPlayingCover"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/Shape.RoundPlayer"
+        app:srcCompat="@drawable/ic_music"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/titleArtistBox"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:minHeight="56dp"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="10dp">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/peek_imageArt"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:contentDescription="@string/cover_image"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_logo" />
+        android:orientation="vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="6dp"
+        app:layout_constraintStart_toEndOf="@id/nowPlayingCover"
+        app:layout_constraintEnd_toStartOf="@+id/btnPrev"
+        app:layout_constraintTop_toTopOf="@id/nowPlayingCover"
+        app:layout_constraintBottom_toBottomOf="@id/nowPlayingCover">
 
         <TextView
-            android:id="@+id/peek_textTitle"
-            android:layout_width="0dp"
+            android:id="@+id/nowPlayingTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:maxLines="1"
+            android:text="@string/song_title_placeholder"
+            android:textSize="14sp"
             android:textColor="@color/text_primary"
-            android:textSize="16sp"
-            android:layout_marginStart="14dp"
-            app:layout_constraintEnd_toStartOf="@id/peek_btnPrev"
-            app:layout_constraintStart_toEndOf="@id/peek_imageArt"
-            app:layout_constraintTop_toTopOf="@id/peek_imageArt" />
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true" />
 
         <TextView
-            android:id="@+id/peek_textSubtitle"
-            android:layout_width="0dp"
+            android:id="@+id/nowPlayingArtist"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
+            android:text="@string/artist_placeholder"
+            android:textSize="12sp"
             android:textColor="@color/text_secondary"
-            android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="@id/peek_imageArt"
-            app:layout_constraintEnd_toStartOf="@id/peek_btnPrev"
-            app:layout_constraintStart_toStartOf="@id/peek_textTitle"
-            app:layout_constraintTop_toBottomOf="@id/peek_textTitle" />
+            android:singleLine="true"
+            android:ellipsize="end" />
+    </LinearLayout>
 
-        <ImageView
-            android:id="@+id/peek_btnPrev"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            app:tint="@color/icon_secondary"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/peek_btnPlayPause"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_skip_right" />
+    <ImageView
+        android:id="@+id/btnPrev"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="6dp"
+        android:contentDescription="@string/previous"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        app:srcCompat="@drawable/ic_skip_right"
+        app:tint="@color/icon_primary"
+        app:layout_constraintStart_toEndOf="@id/titleArtistBox"
+        app:layout_constraintEnd_toStartOf="@+id/buttonPlayPause"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <ImageView
-            android:id="@+id/peek_btnPlayPause"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:padding="8dp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/peek_btnNext"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_play"
-            app:tint="@color/text_primary" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/buttonPlayPause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:contentDescription="@string/playpause"
+        app:backgroundTint="@color/spotify_green"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_play"
+        app:tint="@android:color/black"
+        app:layout_constraintStart_toEndOf="@id/btnPrev"
+        app:layout_constraintEnd_toStartOf="@+id/btnNext"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <ImageView
-            android:id="@+id/peek_btnNext"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            android:contentDescription="@string/next"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_skip_next"
-            app:tint="@color/icon_secondary" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+    <ImageView
+        android:id="@+id/btnNext"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="6dp"
+        android:contentDescription="@string/next"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        app:srcCompat="@drawable/ic_skip_next"
+        app:tint="@color/icon_primary"
+        app:layout_constraintStart_toEndOf="@id/buttonPlayPause"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

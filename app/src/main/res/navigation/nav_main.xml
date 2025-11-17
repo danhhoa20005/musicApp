@@ -1,30 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_main"
-    app:startDestination="@id/flashFragment">
-
-    <!-- Splash (Flash) -->
-    <fragment
-        android:id="@+id/flashFragment"
-        android:name="com.example.musicapp.ui.flash.FlashFragment"
-        android:label="Flash">
-        <action
-            android:id="@+id/action_flashFragment_to_libraryFragment"
-            app:destination="@id/libraryFragment" />
-    </fragment>
+    app:startDestination="@id/libraryFragment">
 
     <fragment
         android:id="@+id/libraryFragment"
         android:name="com.example.musicapp.ui.library.LibraryFragment"
-        android:label="Library" >
+        android:label="Library"
+        tools:layout="@layout/fragment_library">
+
+        <!-- action: từ Library -> màn danh sách nhạc của tác giả -->
         <action
-            android:id="@+id/action_libraryFragment_to_playerFragment"
-            app:destination="@id/playerFragment" />
+            android:id="@+id/action_libraryFragment_to_artistFragment"
+            app:destination="@id/artistSongsFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/playerFragment"
-        android:name="com.example.musicapp.ui.player.PlayerFragment"
-        android:label="Player" />
+        android:id="@+id/artistSongsFragment"
+        android:name="com.example.musicapp.ui.artist.ArtistFragment"
+        android:label="Artist Songs"
+        tools:layout="@layout/fragment_artist_songs">
+
+        <!-- gửi kèm thông tin tác giả -->
+        <argument
+            android:name="artistName"
+            app:argType="string" />
+
+        <argument
+            android:name="artistCoverUrl"
+            app:argType="string"
+            android:defaultValue="" />
+
+        <argument
+            android:name="artistId"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+
 </navigation>

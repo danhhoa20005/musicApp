@@ -23,6 +23,14 @@
         <item name="cornerSize">16dp</item>
     </style>
 
+    <style name="Shape.Corner12">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="Shape.RoundPlayer">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/player_cover_radius</item>
+    </style>
     <!-- ====== TAB LAYOUT ====== -->
     <style name="Widget.Music.TabLayout" parent="Widget.MaterialComponents.TabLayout">
         <item name="tabIndicatorFullWidth">false</item>

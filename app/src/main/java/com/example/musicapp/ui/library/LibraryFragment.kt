@@ -4,23 +4,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.musicapp.R
-import com.example.musicapp.data.SongFilter
+import com.example.musicapp.data.artist.ArtistCovers
+import com.example.musicapp.data.song.SongFilter
 import com.example.musicapp.databinding.FragmentLibraryBinding
+import com.example.musicapp.ui.artist.ArtistAdapter
+import com.example.musicapp.ui.player.PlayerFragment
+import com.example.musicapp.ui.song.SongListFragment
+import com.example.musicapp.ui.util.CoverResolver
+import com.example.musicapp.ui.viewmodel.LibraryViewModel
 import com.example.musicapp.ui.viewmodel.NowPlayingViewModel
 import com.example.musicapp.ui.viewmodel.ServiceConnectionViewModel
-import com.example.musicapp.util.navigateFrom
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 
-// LibraryFragment - màn hình thư viện chính với danh sách và now playing peek
+// LibraryFragment: màn thư viện chính, gồm tabs bài hát + hàng artist ngang + pull-to-refresh
 class LibraryFragment : Fragment() {
 
     private var _binding: FragmentLibraryBinding? = null
@@ -28,35 +35,35 @@ class LibraryFragment : Fragment() {
 
     private val serviceVM: ServiceConnectionViewModel by activityViewModels()
     private val nowVM: NowPlayingViewModel by activityViewModels()
+    private val libraryVM: LibraryViewModel by activityViewModels()
 
     private lateinit var pagerAdapter: LibraryPagerAdapter
-    private val pages by lazy { listOf(LibraryPage(R.string.tab_all_songs, SongFilter.ALL)) }
+    private lateinit var artistAdapter: ArtistAdapter
 
-    private var musicService: com.example.musicapp.player.MusicService? = null
+    // pages: cấu hình 3 tab (All / Favorites / Recent) cho ViewPager
+    private val pages by lazy {
+        listOf(
+            LibraryPage(R.string.tab_all_songs, SongFilter.ALL),
+            LibraryPage(R.string.tab_favorites, SongFilter.FAVORITE),
+            LibraryPage(R.string.tab_recent, SongFilter.RECENT)
+        )
+    }
 
-    // Now playing peek (kéo lên giống YouTube Music)
-    private var nowPlayingSheet: View? = null
-    private lateinit var nowPlayingBehavior: BottomSheetBehavior<View>
-    private var peekContainer: View? = null
-    private var peekPlay: ImageView? = null
-    private var peekPrev: ImageView? = null
-    private var peekNext: ImageView? = null
-    private var peekTitle: TextView? = null
-    private var peekSubtitle: TextView? = null
-    private var peekArtwork: ImageView? = null
-
-    // Cờ chống navigate nhiều lần khi kéo vượt 70%
-    private var navigatedToPlayer = false
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    // onCreateView: inflate layout và trả về root view
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentLibraryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    // onViewCreated: khởi tạo UI (ViewPager, tabs, hàng artist, swipe refresh) và gắn observer
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ViewPager + TabLayout
+        // ViewPager + TabLayout: gắn adapter và tiêu đề từng tab
         pagerAdapter = LibraryPagerAdapter(this, pages)
         binding.viewPager.adapter = pagerAdapter
         binding.viewPager.isUserInputEnabled = true
@@ -65,143 +72,75 @@ class LibraryFragment : Fragment() {
             tab.text = getString(pages[pos].titleRes)
         }.attach()
 
-        // Lấy bottomSheet & behavior
-        nowPlayingSheet = view.findViewById(R.id.nowPlayingSheet)
-        requireNotNull(nowPlayingSheet) { "nowPlayingSheet missing. Hãy dùng view_now_playing_sheet.xml như đã hướng dẫn." }
-        nowPlayingBehavior = BottomSheetBehavior.from(nowPlayingSheet!!)
-        nowPlayingBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        nowPlayingBehavior.isHideable = true
-        nowPlayingBehavior.skipCollapsed = false
-        nowPlayingBehavior.saveFlags = BottomSheetBehavior.SAVE_ALL
-        nowPlayingBehavior.isDraggable = true
+        // Hàng artist ngang
+        setupArtistRow()
 
-        // Ánh xạ control trong peek
-        peekContainer = nowPlayingSheet!!.findViewById(R.id.nowPlayingPeek)
-        peekPlay  = nowPlayingSheet!!.findViewById(R.id.peek_btnPlayPause)
-        peekPrev  = nowPlayingSheet!!.findViewById(R.id.peek_btnPrev)
-        peekNext  = nowPlayingSheet!!.findViewById(R.id.peek_btnNext)
-        peekTitle = nowPlayingSheet!!.findViewById(R.id.peek_textTitle)
-        peekSubtitle   = nowPlayingSheet!!.findViewById(R.id.peek_textSubtitle)
-        peekArtwork   = nowPlayingSheet!!.findViewById(R.id.peek_imageArt)
+        // Observer danh sách artist từ ViewModel, cập nhật adapter + ẩn/hiện section
+        libraryVM.artists.observe(viewLifecycleOwner) { artists ->
+            artistAdapter.submitListAndApplyCovers(artists)
+            binding.authorSection.isVisible = artists.isNotEmpty()
+            binding.swipeRefresh.isRefreshing = false
+        }
 
-        // Click peek: có thể mở thẳng Player
-        peekContainer?.setOnClickListener { openPlayer() }
+        // Load dữ liệu lần đầu (songs + artists)
+        binding.swipeRefresh.isRefreshing = true
+        libraryVM.load(SongFilter.ALL)
 
-        // Điều khiển phát từ peek
-        peekPlay?.setOnClickListener { musicService?.toggle() }
-        peekPrev?.setOnClickListener { musicService?.previous() }
-        peekNext?.setOnClickListener { musicService?.next() }
+        // Chỉnh khoảng kéo để trigger refresh (kéo xa hơn chút mới refresh)
+        val density = resources.displayMetrics.density
+        val distanceDp = 200f
+        val distancePx = (distanceDp * density).toInt()
+        binding.swipeRefresh.setDistanceToTriggerSync(distancePx)
 
-        // Callback kéo: nếu kéo >= 70% thì mở PlayerFragment
-        nowPlayingBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(sheet: View, slideOffset: Float) {
-                // slideOffset: [-1, 1]; với BottomSheet standard: 0≈collapsed, 1=expanded.
-                if (slideOffset >= 0.7f && !navigatedToPlayer) {
-                    navigatedToPlayer = true
-                    // Đưa về collapsed để không che animation điều hướng
-                    nowPlayingBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                    openPlayer()
-                }
-                // Cập padding cho content tương ứng peekHeight khi gần collapsed
-                if (nowPlayingBehavior.state == BottomSheetBehavior.STATE_COLLAPSED || slideOffset in 0f..1f) {
-                    setBottomInset(nowPlayingBehavior.peekHeight)
+        // Listener kéo để refresh: reload lại dữ liệu Library + list trong các tab
+        binding.swipeRefresh.setOnRefreshListener {
+            binding.swipeRefresh.isRefreshing = true
+            libraryVM.load(SongFilter.ALL)
+
+            childFragmentManager.fragments.forEach { f ->
+                if (f is SongListFragment) {
+                    f.refreshSongs()
                 }
             }
-            override fun onStateChanged(sheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    setBottomInset(0)
-                }
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    setBottomInset(nowPlayingBehavior.peekHeight)
-                }
-                // Khi user kéo xuống/đóng, cho phép navigate lần sau
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED || newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    navigatedToPlayer = false
-                }
-            }
-        })
+        }
 
-        // Quan sát service
+        // Gắn service phát nhạc cho NowPlayingViewModel (không xử lý UI bottom sheet tại đây)
         serviceVM.service.observe(viewLifecycleOwner) { srv ->
-            musicService = srv
             nowVM.attachService(srv)
         }
-
-        // Quan sát bài hiện tại: chỉ hiện khi có bài (user đã bấm nhạc)
-        nowVM.currentSong.observe(viewLifecycleOwner) { song ->
-            if (song == null) {
-                hidePeek()
-                peekArtwork?.setImageResource(R.drawable.ic_logo)
-            } else {
-                peekTitle?.text = song.title
-                peekSubtitle?.text = song.artist ?: ""
-                peekArtwork?.let { art ->
-                    Glide.with(art)
-                        .load(song.artworkUri ?: song.uri)
-                        .placeholder(R.drawable.ic_logo)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .centerCrop()
-                        .into(art)
-                }
-                // Đặt peekHeight theo chiều cao thực của peek
-                nowPlayingSheet?.post {
-                    val peek = peekContainer?.height ?: 0
-                    nowPlayingBehavior.peekHeight = if (peek > 0) peek else dp(72)
-                    showPeek()
-                }
-            }
-        }
-
-        // Nút play/pause
-        nowVM.isPlaying.observe(viewLifecycleOwner) { playing ->
-            peekPlay?.setImageResource(if (playing) R.drawable.ic_pause else R.drawable.ic_play)
-        }
-
-        // Trạng thái ban đầu ẩn hoàn toàn
-        hidePeek()
     }
 
+    // setupArtistRow: cấu hình RecyclerView hàng ngang hiển thị danh sách artist + xử lý click
+    private fun setupArtistRow() {
+        artistAdapter = ArtistAdapter()
+        binding.rcTacGia.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+            adapter = artistAdapter
+            setHasFixedSize(true)
+            itemAnimator = null
+        }
+
+        // set map cover cho artist + cover mặc định
+        artistAdapter.setCoverMap(ArtistCovers.covers)
+        artistAdapter.setDefaultCoverUrl(ArtistCovers.defaultCover)
+
+        // xử lý click artist: điều hướng sang ArtistFragment, truyền tên + cover
+        artistAdapter.setOnItemClick { artist ->
+            val args = bundleOf(
+                "artistName" to artist.name,
+                "artistCoverUrl" to (artist.cover?.toString() ?: "")
+            )
+            findNavController().navigate(
+                R.id.action_libraryFragment_to_artistFragment,
+                args
+            )
+        }
+    }
+
+    // onDestroyView: giải phóng binding khi view bị destroy để tránh leak
     override fun onDestroyView() {
-        peekContainer = null
-        musicService = null
         _binding = null
         super.onDestroyView()
-    }
-
-    // Điều hướng Player
-    private fun openPlayer() {
-        // Điều hướng sang PlayerFragment nếu đang ở LibraryFragment
-        findNavController().navigateFrom(
-            R.id.libraryFragment,
-            R.id.action_libraryFragment_to_playerFragment
-        )
-    }
-
-    // Hiện peek: bottom sheet chuyển về collapsed (chỉ cao bằng phần peek)
-    private fun showPeek() {
-        if (nowPlayingBehavior.state == BottomSheetBehavior.STATE_HIDDEN ||
-            nowPlayingBehavior.state == BottomSheetBehavior.STATE_DRAGGING) {
-            nowPlayingBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            setBottomInset(nowPlayingBehavior.peekHeight)
-        }
-    }
-
-    // Ẩn peek
-    private fun hidePeek() {
-        if (this::nowPlayingBehavior.isInitialized) {
-            nowPlayingBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            setBottomInset(0)
-        }
-    }
-
-    // Đệm nội dung phía dưới = chiều cao peek khi đang hiện
-    private fun setBottomInset(pixels: Int) {
-        val c = binding.contentContainer
-        c.setPadding(c.paddingLeft, c.paddingTop, c.paddingRight, pixels)
-    }
-
-    private fun dp(v: Int): Int {
-        val d = resources.displayMetrics.density
-        return (v * d + 0.5f).toInt()
     }
 }

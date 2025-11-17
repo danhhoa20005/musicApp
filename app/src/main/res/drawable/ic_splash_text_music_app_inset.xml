@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- inset: thêm khoảng trống để logo không sát mép và tránh bị crop ở splash -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="28dp"
+    android:insetTop="28dp"
+    android:insetRight="28dp"
+    android:insetBottom="28dp"
+    android:drawable="@drawable/ic_logo" />

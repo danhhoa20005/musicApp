@@ -1,22 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Base - gom cấu hình chung -->
-    <style name="Base.Theme.MusicApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- tuỳ chỉnh màu sắc nếu muốn -->
-        <!-- <item name="colorPrimary">@color/purple_200</item> -->
-    </style>
+    <!-- Theme chính sau khi rời splash -->
+    <style name="Theme.MusicApp" parent="Theme.Material3.DayNight.NoActionBar" />
 
-    <!-- Theme chính của app -->
-    <style name="Theme.MusicApp" parent="Base.Theme.MusicApp" />
-
-    <!-- Theme Splash (Android 12+) -->
+    <!-- Theme Splash -->
     <style name="Theme.MusicApp.Splash" parent="Theme.SplashScreen">
-        <!-- icon hiển thị giữa màn hình khởi động -->
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
-        <!-- nền của màn hình khởi động -->
-        <item name="windowSplashScreenBackground">@android:color/black</item>
-        <!-- theme sẽ áp sau khi splash biến mất -->
+        <!-- Logo giữa màn splash (PNG trong suốt) -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_text_music_app_inset </item>
+        <!-- Nền phẳng đồng bộ với gradient chính -->
+        <item name="windowSplashScreenBackground">@color/bg_splash</item>
+        <!-- Theme sẽ áp sau khi splash biến mất -->
         <item name="postSplashScreenTheme">@style/Theme.MusicApp</item>
+
     </style>
 
 </resources>

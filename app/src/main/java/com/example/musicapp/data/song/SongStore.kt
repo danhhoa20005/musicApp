@@ -1,4 +1,4 @@
-package com.example.musicapp.data
+package com.example.musicapp.data.song
 
 import android.content.ContentUris
 import android.content.Context
@@ -10,7 +10,7 @@ object SongStore {
 
     private const val MIN_DURATION_MS = 5_000
 
-    fun loadDeviceSongs(context: Context, filter: SongFilter = SongFilter.ALL): List<Song> {
+    fun loadAllSongs(context: Context): List<Song> {
         val out = ArrayList<Song>()
 
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -26,24 +26,20 @@ object SongStore {
             MediaStore.Audio.Media.ALBUM,
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.MIME_TYPE,
-            MediaStore.Audio.Media.DATE_ADDED,
-            MediaStore.Audio.Media.DISPLAY_NAME
+            MediaStore.Audio.Media.DATE_ADDED
         )
 
-        // Chỉ lấy nhạc thật và đủ dài
-        val selection = "${MediaStore.Audio.Media.IS_MUSIC}=1 AND ${MediaStore.Audio.Media.DURATION}>=?"
+        val selection =
+            "${MediaStore.Audio.Media.IS_MUSIC}=1 AND ${MediaStore.Audio.Media.DURATION}>=?"
         val selectionArgs = arrayOf(MIN_DURATION_MS.toString())
 
-        // Sắp xếp A→Z theo tiêu đề
-        val sortOrder = "${MediaStore.Audio.Media.TITLE} COLLATE NOCASE ASC"
+
+        val sortOrder: String? = null
 
         context.contentResolver.query(
-            collection,
-            projection,
-            selection,
-            selectionArgs,
-            sortOrder
+            collection, projection, selection, selectionArgs, sortOrder
         )?.use { cursor ->
+
             val iId = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
             val iTitle = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
             val iArtist = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
@@ -51,31 +47,24 @@ object SongStore {
             val iDuration = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
             val iMime = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.MIME_TYPE)
             val iDateAdded = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED)
-            val iDisplayName = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
 
             while (cursor.moveToNext()) {
+
                 val id = cursor.getLong(iId)
                 val title = cursor.getString(iTitle) ?: "Unknown"
-                val artist = cursor.getString(iArtist)
-                val album = cursor.getString(iAlbum)
-                val duration = cursor.getLong(iDuration).coerceAtLeast(0L)
-                val mime = cursor.getString(iMime)
-                val dateAdded = cursor.getLong(iDateAdded)
-                // displayName vẫn đọc nhưng không dùng thêm bộ lọc nào
-                // val displayName = cursor.getString(iDisplayName)
-
                 val uri = ContentUris.withAppendedId(collection, id)
 
                 out.add(
                     Song(
                         id = id.toString(),
                         title = title,
-                        artist = artist,
-                        album = album,
+                        artist = cursor.getString(iArtist),
+                        album = cursor.getString(iAlbum),
                         uri = uri,
-                        durationMs = duration,
-                        mimeType = mime,
-                        dateAddedSec = dateAdded
+                        artworkUri = null,
+                        durationMs = cursor.getLong(iDuration),
+                        mimeType = cursor.getString(iMime),
+                        dateAddedSec = cursor.getLong(iDateAdded)
                     )
                 )
             }

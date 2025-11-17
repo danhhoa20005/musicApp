@@ -4,18 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
     android:layout_marginVertical="0dp"
     android:clickable="true"
     android:focusable="true"
     app:cardUseCompatPadding="false"
-
     app:cardBackgroundColor="@android:color/transparent"
     app:cardElevation="0dp"
     app:strokeWidth="0dp"
-
     app:shapeAppearanceOverlay="@style/Shape.Rounded.16"
-    app:rippleColor="#0E5C2A">
+    app:rippleColor="@drawable/ripple_brand">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -24,6 +21,7 @@
         android:padding="12dp"
         android:background="@android:color/transparent">
 
+        <!-- Ảnh: đổi shapeAppearanceOverlay để dùng đúng style như Player, bỏ clipToOutline -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageArt"
             android:layout_width="56dp"
@@ -34,8 +32,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:srcCompat="@drawable/ic_logo"
-            app:shapeAppearanceOverlay="@style/Shape.Rounded.12"
-            android:clipToOutline="true" />
+            app:shapeAppearanceOverlay="@style/Shape.RoundPlayer" />
 
         <TextView
             android:id="@+id/textTitle"

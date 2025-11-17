@@ -1,52 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.musicapp">
 
-    <!-- Quyền đọc nhạc trong máy -->
-    <!-- Android 13+ (API 33+): dùng READ_MEDIA_AUDIO -->
+    <!-- Quyền đọc file nhạc -->
+    <!-- Android 13+ (API 33+): READ_MEDIA_AUDIO -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-    <!-- Android 12 trở xuống: dùng READ_EXTERNAL_STORAGE -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Android 12 trở xuống: dùng READ_EXTERNAL_STORAGE; giới hạn tới API 32 để tránh cảnh báo -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
-    <!-- Chạy foreground service để phát nhạc -->
+    <!-- Foreground Service để phát nhạc -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <!-- Android 13+: quyền hiện thông báo -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <!-- Nếu phát online mới cần -->
+    <!-- Nếu có phát online -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="ProMusic"
         android:theme="@style/Theme.MusicApp">
 
-        <!-- MainActivity là LAUNCHER. NavGraph startDestination = flashFragment -->
+        <!-- MainActivity là LAUNCHER, áp theme Splash để dùng SplashScreen API -->
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.MusicApp">
+            android:theme="@style/Theme.MusicApp.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- (Tuỳ chọn) Giữ SplashActivity nhưng KHÔNG LAUNCHER, hoặc xoá hẳn nếu đã chuyển sang FlashFragment -->
-        <!--
-        <activity
-            android:name=".ui.splash.SplashActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MusicApp.Splash" />
-        -->
-
-        <!-- Service phát nhạc -->
+        <!-- Service phát nhạc (Android 14+ cần type mediaPlayback như dưới) -->
         <service
             android:name=".player.MusicService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
-        <!-- Media buttons (tai nghe / lockscreen) -->
+        <!-- Media buttons (tai nghe/lockscreen) -->
         <receiver
             android:name="androidx.media.session.MediaButtonReceiver"
             android:exported="false">
@@ -54,5 +51,6 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
     </application>
 </manifest>

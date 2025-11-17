@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ripple theo trạng thái: pressed/focused/hovered với alpha thấp để dịu mắt -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- pressed: mạnh nhất (20%) -->
+    <item android:alpha="1"
+        android:color="#331DB954"
+        android:state_pressed="true" />
+
+    <!-- focused: trung bình (12%) -->
+    <item android:alpha="1"
+        android:color="#1F1DB954"
+        android:state_focused="true" />
+
+    <!-- hovered: nhẹ (8%) -->
+    <item android:alpha="1"
+        android:color="#141DB954"
+        android:state_hovered="true" />
+
+    <!-- default: trong suốt -->
+    <item android:color="#00000000" />
+</selector>

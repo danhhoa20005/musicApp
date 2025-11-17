@@ -4,63 +4,101 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_coordinator"
     android:layout_width="match_parent"
+    android:paddingTop="0dp"
     android:layout_height="match_parent"
     android:background="@drawable/bg_dark_gradient">
 
-    <LinearLayout
-        android:id="@+id/contentContainer"
+    <!-- Kéo xuống để refresh toàn bộ Library -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="20dp"
-        android:clipToPadding="false">
+        android:layout_height="match_parent">
 
+        <!-- Nội dung thư viện -->
         <LinearLayout
+            android:id="@+id/contentContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:paddingBottom="8dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="16dp"
+            android:clipToPadding="false"
+            android:weightSum="2">
 
-            <TextView
-                android:id="@+id/textTitleLibrary"
-                android:layout_width="0dp"
+            <!-- Tiêu đề "Your Library" -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:id="@+id/textTitleLibrary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/title_your_library"
+                    android:textColor="@color/text_primary"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
+
+            <!-- Tabs -->
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/transparent"
+                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorColor="@color/tab_indicator"
+                app:tabTextColor="@color/tab_text_normal"
+                app:tabSelectedTextColor="@color/tab_text_selected"
+                app:tabRippleColor="@android:color/transparent"
+                app:tabMode="auto" />
+
+            <!-- ViewPager2: nửa trên -->
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/title_your_library"
-                android:textColor="@color/text_primary"
-                android:textSize="20sp"
-                android:fontFamily="sans-serif-medium" />
+                android:clipToPadding="false" />
+
+            <!-- Suggested Artists: nửa dưới -->
+            <LinearLayout
+                android:id="@+id/authorSection"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:layout_marginStart="-20dp"
+                android:layout_marginEnd="-20dp">
+
+                <TextView
+                    android:id="@+id/tvTacGiaDeXuat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="20dp"
+                    android:paddingBottom="8dp"
+                    android:text="All Artists"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcTacGia"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never" />
+            </LinearLayout>
         </LinearLayout>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="@android:color/transparent"
-            app:tabIndicatorFullWidth="false"
-            app:tabIndicatorColor="@color/tab_indicator"
-            app:tabTextColor="@color/tab_text_normal"
-            app:tabSelectedTextColor="@color/tab_text_selected"
-            app:tabRippleColor="@android:color/transparent"
-            app:tabMode="auto"/>
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"/>
-    </LinearLayout>
-
-    <include
-        layout="@layout/view_now_playing_sheet"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="bottom"
-        android:elevation="10dp"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -11,40 +11,40 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-// NowPlayingViewModel - đồng bộ trạng thái phát từ MusicService
+// VM đồng bộ trạng thái phát để UI observe
 class NowPlayingViewModel : ViewModel() {
 
-    // currentSong - bài hát hiện tại
+    // bài hiện tại
     private val _currentSong = MutableLiveData<Song?>()
     val currentSong: LiveData<Song?> = _currentSong
 
-    // isPlaying - đang phát
+    // đang phát?
     private val _isPlaying = MutableLiveData(false)
     val isPlaying: LiveData<Boolean> = _isPlaying
 
-    // positionMs/durationMs - tiến độ/tổng thời gian
+    // tiến độ / tổng thời gian (ms)
     private val _positionMs = MutableLiveData(0)
     val positionMs: LiveData<Int> = _positionMs
     private val _durationMs = MutableLiveData(0)
     val durationMs: LiveData<Int> = _durationMs
 
-    // shuffleOn/repeatMode - trộn/lặp
+    // shuffle / repeat
     private val _shuffleOn = MutableLiveData(false)
     val shuffleOn: LiveData<Boolean> = _shuffleOn
     private val _repeatMode = MutableLiveData(Player.REPEAT_MODE_OFF)
     val repeatMode: LiveData<Int> = _repeatMode
 
-    // service & ticker
+    // service hiện tại + job ticker
     private var service: MusicService? = null
     private var tickerJob: Job? = null
 
-    // attachService - đăng ký lắng nghe + khởi chạy vòng cập nhật tiến độ
+    // gắn Service và cập nhật state
     fun attachService(newService: MusicService?) {
         service = newService
         tickerJob?.cancel()
         if (newService == null) return
 
-        // cập nhật lần đầu
+        // init lần đầu
         _currentSong.value = newService.currentSong()
         _isPlaying.value = newService.isPlaying()
         _positionMs.value = newService.position()
@@ -52,23 +52,23 @@ class NowPlayingViewModel : ViewModel() {
         _shuffleOn.value = newService.isShuffleOn()
         _repeatMode.value = newService.getRepeatMode()
 
-        // lắng nghe sự kiện player (nhẹ)
+        // lắng nghe player
         newService.addPlayerListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                _isPlaying.postValue(isPlaying)
+                _isPlaying.postValue(isPlaying) // play/pause
             }
             override fun onMediaItemTransition(mediaItem: androidx.media3.common.MediaItem?, reason: Int) {
-                _currentSong.postValue(newService.currentSong())
+                _currentSong.postValue(newService.currentSong()) // đổi bài
                 _durationMs.postValue(newService.duration())
                 _positionMs.postValue(newService.position())
             }
             override fun onEvents(player: Player, events: Player.Events) {
-                _shuffleOn.postValue(newService.isShuffleOn())
-                _repeatMode.postValue(newService.getRepeatMode())
+                _shuffleOn.postValue(newService.isShuffleOn())   // shuffle
+                _repeatMode.postValue(newService.getRepeatMode())// repeat
             }
         })
 
-        // ticker - 500ms/lần: cập nhật tiến độ/duration mượt
+        // ticker 500ms đẩy tiến độ/duration
         tickerJob = viewModelScope.launch {
             while (true) {
                 val s = service ?: break

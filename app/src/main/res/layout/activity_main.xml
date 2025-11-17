@@ -2,10 +2,13 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_coordinator_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:background="@drawable/bg_dark_gradient">
 
+    <!-- NavHost chứa các Fragment: Library, Artist, ... -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/navHost"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -13,5 +16,33 @@
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
         app:navGraph="@navigation/nav_main" />
+
+    <!-- BOTTOM SHEET DÙNG CHUNG TOÀN APP -->
+    <LinearLayout
+        android:id="@+id/nowPlayingSheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/bg_peek_blur"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        app:behavior_peekHeight="68dp"
+        app:behavior_fitToContents="true"
+        app:behavior_hideable="true">
+
+        <!-- Mini player (peek) -->
+        <include
+            android:id="@+id/peek"
+            layout="@layout/view_now_playing_peek" />
+
+        <!-- Player full (PlayerFragment) -->
+        <FrameLayout
+            android:id="@+id/playerSheetContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

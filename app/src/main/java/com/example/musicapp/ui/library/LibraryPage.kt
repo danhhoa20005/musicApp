@@ -1,7 +1,7 @@
 package com.example.musicapp.ui.library
 
 import androidx.annotation.StringRes
-import com.example.musicapp.data.SongFilter
+import com.example.musicapp.data.song.SongFilter
 
 // LibraryPage - mô tả 1 tab: tiêu đề + bộ lọc bài hát
 data class LibraryPage(

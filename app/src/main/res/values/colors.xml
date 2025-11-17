@@ -1,21 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Nền chung (gradient màn chính) -->
     <color name="bg_start">#191A1F</color>
     <color name="bg_center">#141518</color>
     <color name="bg_end">#101113</color>
     <color name="bg_overlay">#1F1F23</color>
-    <color name="outline">#26FFFFFF</color>
 
+    <!-- Nền Splash (dùng cho Theme.SplashScreen) -->
+    <color name="bg_splash">#101015</color>
+
+    <!-- Viền / đường chia -->
+    <color name="outline">#26FFFFFF</color>
+    <color name="divider">#14FFFFFF</color>
+
+    <!-- Văn bản -->
     <color name="text_primary">#FFFFFFFF</color>
     <color name="text_secondary">#B3FFFFFF</color>
     <color name="text_tertiary">#80FFFFFF</color>
+    <color name="text_disabled">#61FFFFFF</color>
 
+    <!-- Tô điểm thương hiệu / nhấn -->
     <color name="spotify_green">#1DB954</color>
+    <color name="secondary">#FFD54F</color>
 
-    <!-- Thẻ và chip -->
+    <!-- Thẻ / Card -->
     <color name="surface_card">#1E1F23</color>
     <color name="surface_card_stroke">#33FFFFFF</color>
+
+    <!-- Chip -->
     <color name="chip_background">#26272C</color>
     <color name="chip_text">#E6FFFFFF</color>
 
@@ -24,17 +37,36 @@
     <color name="tab_text_selected">#FFFFFFFF</color>
     <color name="tab_indicator">#FFFFFFFF</color>
 
+    <!-- FAB / nút đặc biệt (giữ tên cũ để không gãy tham chiếu) -->
     <color name="fab_yellow">#1DB954</color>
 
+    <!-- SeekBar / Slider -->
     <color name="seek_thumb">#FFFFFFFF</color>
     <color name="seek_progress">#FFFFFFFF</color>
     <color name="seek_track">#33FFFFFF</color>
 
+    <!-- Biểu tượng -->
     <color name="icon_primary">#FFFFFFFF</color>
     <color name="icon_secondary">#7AFFFFFF</color>
+    <color name="icon_disabled">#61FFFFFF</color>
 
+    <!-- Mini-player gradient -->
+    <color name="peek_grad_start">#141C19</color>
+    <color name="peek_grad_center">#1A2A22</color>
+    <color name="peek_grad_end">#101714</color>
+
+    <!-- Tiện ích chung -->
     <color name="black">#000000</color>
+    <color name="white">#FFFFFFFF</color>
     <color name="text_white">#FFFFFFFF</color>
-    <color name="secondary">#FFD54F</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Ripple / nhấn (alpha thấp để dịu) -->
+    <color name="ripple_light">#1FFFFFFF</color>
+    <color name="ripple_dark">#33FFFFFF</color>
+
+    <!-- Màu thanh hệ thống cho nền tối -->
+    <color name="status_bar_dark">#000000</color>
+    <color name="nav_bar_dark">#000000</color>
 
 </resources>

@@ -1,0 +1,13 @@
+<!-- res/drawable/overlay_artist_bottom.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Bo tròn đáy khớp với card (12dp); đổi số nếu cardCornerRadius khác -->
+    <corners
+        android:bottomLeftRadius="12dp"
+        android:bottomRightRadius="12dp"/>
+
+    <!-- Gradient từ trong suốt ở trên xuống lớp mờ ở dưới -->
+    <gradient
+        android:angle="270"
+        android:startColor="@android:color/transparent"
+        android:endColor="@color/bg_overlay"/>
+</shape>

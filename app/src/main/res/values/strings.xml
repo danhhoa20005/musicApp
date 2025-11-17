@@ -13,9 +13,12 @@
     <string name="playpause">Phát/Tạm dừng</string>
     <string name="next">Bài tiếp</string>
     <string name="shuffle">Ngẫu nhiên</string>
-
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
     <string name="song_title_placeholder">Tên bài hát</string>
     <string name="artist_placeholder">Nghệ sĩ</string>
+    <string name="tab_favorites">Yêu thích</string>
+    <string name="tab_recent">Gần đây</string>
 
     <string name="tab_all_songs">Tất cả</string>
     <string name="tab_mp3_songs">Yêu thích</string>
